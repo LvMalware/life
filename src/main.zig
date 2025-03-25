@@ -94,7 +94,7 @@ const Grid = struct {
             for (0..self.height) |y| {
                 config.setColor(
                     stdout,
-                    if (self.get(x, y)) .green else .red,
+                    if (self.get(x, y)) .white else .black,
                 ) catch {};
                 _ = stdout.write("\xE2\x8f\xB9 ") catch continue;
             }
@@ -110,25 +110,30 @@ fn goUp(stdout: std.fs.File, count: usize) void {
 }
 
 pub fn main() !void {
-    const width = 10;
-    const height = 10;
+    const width = 30;
+    const height = 30;
     const grid = try Grid.init(std.heap.page_allocator, width, height);
     defer grid.deinit();
     const stdout = std.io.getStdOut();
 
-    grid.set(2, 2, true);
-    grid.set(3, 2, true);
-    grid.set(2, 1, true);
-    grid.set(1, 6, true);
-    grid.set(3, 5, true);
-    grid.set(3, 6, true);
-    grid.set(3, 7, true);
+    //grid.set(2, 2, true);
+    //grid.set(3, 2, true);
+    //grid.set(2, 1, true);
+    //grid.set(1, 6, true);
+    //grid.set(3, 5, true);
+    //grid.set(3, 6, true);
+    //grid.set(3, 7, true);
+    for (0..width) |i| {
+        for (0..height) |j| {
+            grid.set(i, j, std.crypto.random.boolean());
+        }
+    }
 
     while (true) {
         grid.printGeneration(stdout);
         grid.nextGeneration();
         std.time.sleep(std.time.ms_per_s * 400000);
-        goUp(stdout, height);
+        goUp(stdout, height - 1);
     }
 }
 
